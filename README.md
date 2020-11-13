@@ -40,3 +40,27 @@ foreach (var file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
 	vfs.Add(file, relative);
 }
 ```
+
+**Get all the files in the VFS**
+```cs
+foreach (var file in vfs.GetAllEntries())
+{
+	// Write out the path of every file
+	Console.WriteLine($"{file.Path}");
+}
+
+```
+
+**Get all the files in a directory**
+```cs
+foreach (var file in vfs.GetEntriesInDirectory("\\SomeDirectory"))
+{
+	Console.WriteLine($"{file.Name}");
+}
+```
+
+**Read a file**
+```cs
+var byteArray = vfs.ReadFile("\\SomeDirectory\\SomeFile.txt");
+var text = vfs.ReadFileAsString("\\SomeDirectory\\SomeFile.txt");
+```
