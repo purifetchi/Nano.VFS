@@ -3,7 +3,7 @@
     /// <summary>
     /// User-facing wrapper for VFS files.
     /// </summary>
-    public struct VFSEntry
+    public struct VfsEntry
     {
         internal uint entryHash;
         internal VirtualFileSystem vfs;
@@ -53,6 +53,26 @@
         public string ReadString()
         {
             return vfs.entries[entryHash].ReadString();
+        }
+
+        /// <summary>
+        /// Writes the given buffer into the entry.
+        /// </summary>
+        /// <param name="buffer">The buffer to write</param>
+        /// <param name="fileMode">The file mode</param>
+        public void Write(byte[] buffer, WriteMode writeMode)
+        {
+            vfs.entries[entryHash].Write(buffer, writeMode);
+        }
+
+        /// <summary>
+        /// Writes the given string into the entry.
+        /// </summary>
+        /// <param name="value">The string to write</param>
+        /// <param name="fileMode">The file mode</param>
+        public void Write(string value, WriteMode writeMode)
+        {
+            vfs.entries[entryHash].Write(value, writeMode);
         }
     }
 }

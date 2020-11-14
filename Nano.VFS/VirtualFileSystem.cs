@@ -9,6 +9,11 @@ namespace Nano.VFS
     public class VirtualFileSystem
     {
         /// <summary>
+        /// The path separator the VFS uses.
+        /// </summary>
+        public const char PATH_SEPARATOR = '\\';
+
+        /// <summary>
         /// The VFS entry container. Maps from relative path hashes to VirtualFileEntries
         /// </summary>
         internal readonly Dictionary<uint, VirtualFileEntry> entries = new Dictionary<uint, VirtualFileEntry>();
@@ -25,6 +30,23 @@ namespace Nano.VFS
                 hash = val[i] + (hash << 6) + (hash << 16) - hash;
 
             return hash;
+        }
+
+        /// <summary>
+        /// Creates a new VFS entry and returns a wrapper.
+        /// </summary>
+        /// <param name="entry">The VirtualFileEntry to be created.</param>
+        /// <param name="relativePath">The relative path of the entry.</param>
+        /// <returns>The VfsEntry wrapper of the created entry.</returns>
+        public VfsEntry CreateEntry(VirtualFileEntry entry, string relativePath)
+        {
+            Add(entry, relativePath);
+
+            return new VfsEntry
+            {
+                vfs = this,
+                entryHash = GetEntryHash(relativePath)
+            };
         }
 
         /// <summary>
@@ -93,6 +115,25 @@ namespace Nano.VFS
                 Links = new List<uint>(),
                 Name = Path.GetFileName(relativePath),
                 VFS = this
+            };
+        }
+
+        /// <summary>
+        /// Gets an entry via the relative path.
+        /// </summary>
+        /// <param name="relativePath">The relative path of the entry</param>
+        /// <returns>The VfsEntry wrapper for that path</returns>
+        public VfsEntry GetEntry(string relativePath)
+        {
+            var entryHash = GetEntryHash(relativePath);
+
+            if (!entries.ContainsKey(entryHash))
+                throw new FileNotFoundException();
+
+            return new VfsEntry
+            {
+                entryHash = entryHash,
+                vfs = this
             };
         }
 
@@ -193,10 +234,10 @@ namespace Nano.VFS
         /// Returns an enumerator of every single entry in the VFS
         /// </summary>
         /// <returns>VFSEntry Enumerator</returns>
-        public IEnumerable<VFSEntry> GetAllEntries()
+        public IEnumerable<VfsEntry> GetAllEntries()
         {
             foreach (var file in entries)
-                yield return new VFSEntry
+                yield return new VfsEntry
                 {
                     Type = file.Value.Type,
                     entryHash = file.Key,
@@ -209,7 +250,7 @@ namespace Nano.VFS
         /// </summary>
         /// <param name="path">The path of the directory</param>
         /// <returns>VFSEntry Enumerator</returns>
-        public IEnumerable<VFSEntry> GetEntriesInDirectory(string path)
+        public IEnumerable<VfsEntry> GetEntriesInDirectory(string path)
         {
             if (!DirectoryExists(path))
                 throw new DirectoryNotFoundException();

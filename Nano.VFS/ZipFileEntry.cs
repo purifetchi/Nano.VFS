@@ -39,5 +39,11 @@ namespace Nano.VFS
         {
             return Encoding.UTF8.GetString(Read());
         }
+
+        // We don't support overwriting zip files.
+
+        public override void Write(byte[] buffer, WriteMode fileMode) => throw new NotImplementedException();
+
+        public override void Write(string value, WriteMode fileMode) => throw new NotImplementedException();
     }
 }

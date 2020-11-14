@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Nano.VFS
 {
@@ -43,6 +44,20 @@ namespace Nano.VFS
         /// </summary>
         /// <returns>The content of the entry as a string</returns>
         public abstract string ReadString();
+
+        /// <summary>
+        /// Writes the given buffer into the entry.
+        /// </summary>
+        /// <param name="buffer">The buffer to write</param>
+        /// <param name="fileMode">The file mode</param>
+        public abstract void Write(byte[] buffer, WriteMode fileMode);
+
+        /// <summary>
+        /// Writes the given string into the entry.
+        /// </summary>
+        /// <param name="value">The string to write</param>
+        /// <param name="fileMode">The file mode</param>
+        public abstract void Write(string value, WriteMode fileMode);
 
         /// <summary>
         /// Gets the filename of the current Virtual File Entry
